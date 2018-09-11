@@ -9,7 +9,7 @@ import history from './common/history';
 
 import { IAyncComponentLoader, IRoute } from '@src/interface';
 
-const LoadableComponent = (loader: IAyncComponentLoader) => Loadable({
+export const LoadableComponent = (loader: IAyncComponentLoader) => Loadable({
   loader: () => loader()
     .then(
       res => res, 
