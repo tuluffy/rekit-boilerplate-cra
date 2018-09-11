@@ -2,7 +2,7 @@
   "compilerOptions": {
     "baseUrl": ".",
     "outDir": "build/dist",
-    "module": "esnext",
+    "module": "es6",
     "target": "es5",
     "lib": ["es6", "dom"],
     "sourceMap": true,
@@ -28,7 +28,6 @@
     "scripts",
     "acceptance-tests",
     "webpack",
-    "jest",
-    "src/setupTests.ts"
+    "jest"
   ]
 }

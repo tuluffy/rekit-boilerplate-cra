@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { bindActionCreators, Dispatch } from 'redux';
 import { connect } from 'react-redux';
-import { Link } from 'react-router-dom';
 import reactLogo from '../../images/react-logo.svg';
 import rekitLogo from '../../images/rekit-logo.svg';
 // @ts-ignore
@@ -19,38 +18,7 @@ export class DefaultPage extends React.Component {
         <div className="app-intro">
           <h3>To get started:</h3>
           <ul>
-            <li>
-              Edit component{' '}
-              <a
-                href="http://localhost:6076/element/src%2Ffeatures%2Fhome%2FDefaultPage.js/code"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                src/features/home/DefaultPage.js
-              </a>{' '}
-              for this page.
-            </li>
-            <li>
-              Edit component{' '}
-              <a
-                href="http://localhost:6076/element/src%2Ffeatures%2Fhome%2FApp.js/code"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                src/features/home/App.js
-              </a>{' '}
-              for the root container layout.
-            </li>
-            <li>
-              To see examples, access:&nbsp;
-              <Link to="/examples">/examples</Link>
-            </li>
-            <li>
-              Rekit Studio is running at:&nbsp;
-              <a href="http://localhost:6076/" target="_blank" rel="noopener noreferrer">
-                http://localhost:6076/
-              </a>.
-            </li>
+            <li>test</li>
           </ul>
         </div>
       </div>

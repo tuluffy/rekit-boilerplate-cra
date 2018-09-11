@@ -5,6 +5,8 @@ import configStore from './common/configStore';
 import routeConfig from './common/routeConfig';
 import Root from './Root';
 
+import './styles/index.less';
+
 const store = configStore({});
 
 function renderApp(app: any) {
