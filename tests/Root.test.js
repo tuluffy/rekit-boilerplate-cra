@@ -1,7 +1,7 @@
 import React from 'react';
 import { shallow } from 'enzyme';
-import configStore from '../src/common/configStore';
-import Root from '../src/Root';
+import configStore from '@src/common/configStore';
+import Root from '@src/Root';
 
 describe('Root', () => {
   it('Root has no error', () => {

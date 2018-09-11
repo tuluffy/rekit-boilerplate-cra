@@ -1,0 +1,17 @@
+import { IAction } from '@src/interface';
+import initialState from './initialState';
+
+const reducers: any[] = [
+];
+
+export default function reducer(state = initialState, action: IAction) {
+  let newState;
+  switch (action.type) {
+    // Handle cross-topic actions here
+    default:
+      newState = state;
+      break;
+  }
+  /* istanbul ignore next */
+  return reducers.reduce((s, r) => r(s, action), newState);
+}
