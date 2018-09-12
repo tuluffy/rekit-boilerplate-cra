@@ -1,10 +1,9 @@
 import * as React from 'react';
 
-export interface IPresenterProps {
-  any
+export interface I<%= Presenter %>Props {
 }
 
-export const Presenter = (props: IPresenterProps) => {
+export const <%= Presenter %> = (props: I<%= Presenter %>Props) => {
   return (
     <div className="common-presenter"/>
   );
