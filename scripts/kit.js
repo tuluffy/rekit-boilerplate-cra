@@ -24,12 +24,30 @@ const add = (feature, name, type = 'component', options = {}) => {
 
   // options
   const { async, connect, force, pure } = options;
+  
+  let pascalName = _.pascalCase(name);
   let templateType = _.upperFirst(type);
   let targetDir = featureSrcDir;
   let targetTestDir = featureTestsDir;
   let ext = '.ts';
-  const pascalName = _.pascalCase(name);
   let exportName = pascalName;
+  switch (templateType) {
+    case 'Saga':
+    case 'Action':
+    case 'Selector':
+      targetDir = featureSrcReduxDir;
+      targetTestDir = featureTestsReduxDir;
+      exportName = name;
+      break;
+    case 'Presenter':
+      // stateless component
+      pascalName = exportName = `SFC${pascalName}`;
+    case 'Component':
+      ext = '.tsx';
+      break;
+    default:
+      return console.error(`Error: invalid type ${type} found`);
+  }
   const renderData = {
     async,
     connect,
@@ -42,21 +60,6 @@ const add = (feature, name, type = 'component', options = {}) => {
     selector: name,
     pure
   };
-  switch (templateType) {
-    case 'Saga':
-    case 'Action':
-    case 'Selector':
-      targetDir = featureSrcReduxDir;
-      targetTestDir = featureTestsReduxDir;
-      exportName = name;
-      break;
-    case 'Presenter':
-    case 'Component':
-      ext = '.tsx';
-      break;
-    default:
-      return console.error(`Error: invalid type ${type} found`);
-  }
 
   if (_.toLower(name) === 'index' || name === 'default') {
     return console.error(`Error: can\'t use ${name} as name`);

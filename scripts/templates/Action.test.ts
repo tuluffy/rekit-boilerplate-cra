@@ -1,20 +1,20 @@
 import {
-  actionType,
+  <%= _.toUpper(action) %>,
   <%= action %>,
-  reducer
+  <%= action %>Reducer
 } from '@src/features/<%= feature %>/redux/<%= action %>';
 
 
 describe('<%= feature %>/redux/<%= action %>', () => {
   it('returns correct action by <%= action %>', () => {
-    expect(<%= action %>()).toHaveProperty('type', actionType);
+    expect(<%= action %>()).toHaveProperty('type', <%= _.toUpper(action) %>);
   });
 
   it('handles action type <%= action %> correctly', () => {
     const prevState = {};
-    const state = reducer(
+    const state = <%= action %>Reducer(
       prevState,
-      { type: actionType }
+      { type: <%= _.toUpper(action) %> }
     );
     expect(state === prevState).toBeFalsy();
     expect(state).toEqual(prevState);

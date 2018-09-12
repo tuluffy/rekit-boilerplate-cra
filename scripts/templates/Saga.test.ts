@@ -2,16 +2,16 @@ import { delay } from 'redux-saga';
 import { call, put } from 'redux-saga/effects';
 
 import {
-  actionType,
+  <%= _.toUpper(action) %>,
   <%= action %>,
   do<%= pascalName %>,
-  reducer
+  <%= action %>Reducer
 } from '@src/features/<%= feature %>/redux/<%= action %>';
 
 
 describe('<%= feature %>/redux/<%= action %>', () => {
   it('correct action by <%= action %>', () => {
-    expect(<%= action %>()).toHaveProperty('type', actionType);
+    expect(<%= action %>()).toHaveProperty('type', <%= _.toUpper(action) %>);
   });
   const generator = do<%= pascalName %>();
 
@@ -21,9 +21,9 @@ describe('<%= feature %>/redux/<%= action %>', () => {
 
   it('handles action type <%= action %> correctly', () => {
     const prevState = { };
-    const state = reducer(
+    const state = <%= action %>Reducer(
       prevState,
-      { type: actionType }
+      { type: <%= _.toUpper(action) %> }
     );
     expect(state === prevState).toBeFalsy();
     expect(state).toEqual(prevState);

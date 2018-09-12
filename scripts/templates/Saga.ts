@@ -1,7 +1,7 @@
 import { delay, takeLatest } from 'redux-saga';
 import { call, put } from 'redux-saga/effects';
 
-export const actionType = '<%= feature %>/<%= action %>';
+export const <%= _.toUpper(action) %> = '<%= feature %>/<%= action %>';
 
 export function <%= action %>() {
   return {
@@ -16,21 +16,21 @@ export function* do<%= pascalName %>() {
     res = yield call(delay, 20);
   } catch (err) {
     yield put({
-      type: actionType,
+      type: <%= _.toUpper(action) %>,
       data: { error: err },
     });
     return;
   }
   // Dispatch success action out of try/catch so that render errors are not catched.
   yield put({
-    type: actionType,
+    type: <%= _.toUpper(action) %>,
     data: res,
   });
 }
 
-export function reducer(state: any, action: any) {
+export function <%= action %>Reducer(state: any, action: any) {
   switch (action.type) {
-    case actionType:
+    case <%= _.toUpper(action) %>:
       return {
         ...state,
       };

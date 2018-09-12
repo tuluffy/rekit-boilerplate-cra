@@ -1,14 +1,14 @@
-export const actionType = '<%= feature %>/<%= action %>';
+export const <%= _.toUpper(action) %> = '<%= feature %>/<%= _.toUpper(action) %>';
 
 export function <%= action %>() {
   return {
-    type: actionType
+    type: <%= _.toUpper(action) %>
   };
 }
 
-export function reducer(state: any, action: any) {
+export function <%= action %>Reducer(state: any, action: any) {
   switch (action.type) {
-    case actionType:
+    case <%= _.toUpper(action) %>:
       return {
         ...state,
       };

@@ -5,7 +5,8 @@
       "config/**/*.js",
       "node_modules/**/*.ts",
       "coverage/**/*.js",
-      "scripts"
+      "scripts/**/*.ts",
+      "scripts/**/*.tsx"
     ]
   },
   "rules": {

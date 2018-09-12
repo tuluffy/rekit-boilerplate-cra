@@ -1,10 +1,9 @@
-import { IAction } from '@src/interface';
 import initialState from './initialState';
 
 const reducers: any[] = [
 ];
 
-export default function reducer(state = initialState, action: IAction) {
+export default function reducer(state = initialState, action: any) {
   let newState;
   switch (action.type) {
     // Handle cross-topic actions here

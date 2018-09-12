@@ -9,6 +9,8 @@ import './styles/index.less';
 
 const store = configStore({});
 
+// export type RootState = typeof store;
+
 function renderApp(app: any) {
   render(
     <AppContainer>

@@ -1,4 +1,5 @@
 import * as React from 'react';<% if (connect) { %>
+import Types from 'Types';
 import { bindActionCreators, Dispatch } from 'redux';
 import { connect } from 'react-redux';
 
@@ -19,7 +20,7 @@ export${connect ? '' : ' default'} class <%= Component %> extends React.<%= pure
 
 <% if (connect) { %>
 /* istanbul ignore next */
-function mapStateToProps() {
+function mapStateToProps(state: Types.RootState, ownProps: I<%= Component %>Props) {
   return {};
 }
 
