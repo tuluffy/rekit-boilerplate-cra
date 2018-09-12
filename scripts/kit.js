@@ -29,7 +29,7 @@ const add = (feature, name, type = 'component', options = {}) => {
   let targetTestDir = featureTestsDir;
   let ext = '.ts';
   const pascalName = _.pascalCase(name);
-  let fileName = pascalName;
+  let exportName = pascalName;
   const renderData = {
     async,
     connect,
@@ -48,7 +48,7 @@ const add = (feature, name, type = 'component', options = {}) => {
     case 'Selector':
       targetDir = featureSrcReduxDir;
       targetTestDir = featureTestsReduxDir;
-      fileName = name;
+      exportName = name;
       break;
     case 'Presenter':
     case 'Component':
@@ -62,7 +62,8 @@ const add = (feature, name, type = 'component', options = {}) => {
     return console.error(`Error: can\'t use ${name} as name`);
   }
   const templates = [];
-  // if (!fsX.pathExistsSync(featureSrcDir)) {
+  const featureIndex = path.join(featureSrcDir, 'index.ts');
+  if (!fsX.pathExistsSync(featureSrcDir)) {
     fsX.ensureDirSync(featureSrcDir);
     fsX.ensureDirSync(featureSrcReduxDir);
     templates.push({
@@ -71,25 +72,34 @@ const add = (feature, name, type = 'component', options = {}) => {
     });
     templates.push({
       template: path.join(templatesDir, 'Index.ts'),
-      target: path.join(featureSrcDir, 'index.ts')
+      target: featureIndex
     });
     fsX.copySync(path.join(templatesDir, 'redux'), featureSrcReduxDir);
-  // }
+  }
   fsX.ensureDirSync(featureTestsDir);
   fsX.ensureDirSync(featureTestsReduxDir);
 
   ['', '.test'].forEach(
     (pts) => {
       const extName = `${pts}${ext}`;
+      let entry = false;
+      if (pts === '') {
+        if (ext === '.tsx') {
+          entry = featureIndex;
+        } else if (templateType === 'Action') {
+          entry = path.join(featureSrcReduxDir, 'actions.ts');
+        }
+      }
       templates.push({
+        entry,
         template: path.join(templatesDir, `${templateType}${extName}`),
-        target: path.join(pts === '.test' ? targetTestDir : targetDir, `${pascalName}${extName}`)
+        target: path.join(pts === '.test' ? targetTestDir : targetDir, `${exportName}${extName}`)
       });
     }
   );
 
   templates.forEach(
-    ({ template, target }) => {
+    ({ template, target, entry }) => {
       if (fsX.pathExistsSync(template)) {
         const res = _.template(fsX.readFileSync(template, 'utf8'))(renderData);
         const old = fsX.pathExistsSync(target);
@@ -97,9 +107,19 @@ const add = (feature, name, type = 'component', options = {}) => {
           console.error(`Error: ${target} alreay exists, use -f, --force to overlap it`);
         } else {
           if (old) {
-            console.log(`Warning: ${target} overlapped`);
+            console.log(`Warning: overlap ${target}`);
           }
           fsX.writeFileSync(target, res, { encoding: 'utf8' });
+        }
+        if (entry) {
+          const exportCode = `export ${ext === '.tsx' ? `{ default as ${exportName}, I${exportName}Props }` : `{ ${exportName} }`} from './${exportName}';\n`;
+          if (fsX.readFileSync(entry, { encoding: 'utf8' }).indexOf(exportCode) === -1) {
+            fsX.writeFileSync(
+              entry, 
+              exportCode,
+              { encoding: 'utf8', flag: 'a+' }
+            );
+          }
         }
       } else {
         console.log(template);

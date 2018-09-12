@@ -1,4 +1,8 @@
-import { <%= selector %> } from '@src/features/<%= feature %>/selectors/<%= selector %>';
+import { <%= selector %> } from '@src/features/<%= feature %>/redux/<%= selector %>';
 
-describe('<%= feature %>/selectors/<%= selector %>', () => {
+describe('<%= feature %>/redux/<%= selector %>', () => {
+  it('returns correct value', () => {
+    const expectedResult = 'data';
+    expect(<%= selector %>({ data: 'data' })).toEqual(expectedResult);
+  });
 });

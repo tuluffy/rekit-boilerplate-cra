@@ -1,8 +1,8 @@
 import { createSelector } from 'reselect';
 
-const dataSelector = state => state.data;
+const dataSelector = (state: any) => state.data;
 
-export const <%= _.camelCase(selector) %> = createSelector(
+export const <%= selector %> = createSelector(
   dataSelector,
   data => data
 );

@@ -1,5 +1,5 @@
-<% if (async) { %>
-const loader = (name) => async () => import('./index')[name];
+<% if (async) { %>// @ts-ignore
+const loader = name => async () => import('./index')[name];
 <% } %>
 export default {
   path: '<%= feature %>',

@@ -1,12 +1,14 @@
+export const actionType = '<%= feature %>/<%= action %>';
+
 export function <%= action %>() {
   return {
-    type: '<%= action %>'
+    type: actionType
   };
 }
 
-export function reducer(state, action) {
+export function reducer(state: any, action: any) {
   switch (action.type) {
-    case '<%= action %>':
+    case actionType:
       return {
         ...state,
       };

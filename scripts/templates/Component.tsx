@@ -1,5 +1,4 @@
-import * as React from 'react';
-<% if (connect) { %>
+import * as React from 'react';<% if (connect) { %>
 import { bindActionCreators, Dispatch } from 'redux';
 import { connect } from 'react-redux';
 
