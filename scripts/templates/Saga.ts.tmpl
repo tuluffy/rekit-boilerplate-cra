@@ -1,0 +1,45 @@
+import * as Immutable from 'immutable';
+import { createAction, handleAction, Action } from 'redux-actions';
+import { delay, takeLatest } from 'redux-saga';
+import { call, put } from 'redux-saga/effects';
+
+import { IInitialState } from '../redux/initialState';
+
+export const <%= constsName %> = '<%= feature %>/<%= constsName %>';
+
+export const <%= actionName %> = createAction(<%= constsName %>);
+
+export function* <%= sagaName %>() {
+  let res;
+  try {
+    // Do Ajax call or other async request here. delay(20) is just a placeholder.
+    res = yield call(delay, 20);
+  } catch (err) {
+    yield put({
+      type: <%= constsName %>,
+      data: { error: err },
+    });
+    return;
+  }
+  // Dispatch success action out of try/catch so that render errors are not catched.
+  yield put({
+    type: <%= constsName %>,
+    data: res,
+  });
+}
+
+export interface I<%= pascalSagaName %>State {
+}
+
+export const pure<%= pascalSagaName %>State: I<%= pascalSagaName %>State = {
+};
+
+const defaultState: Immutable.Map<any, any> = Immutable.Map(pure<%= pascalSagaName %>State);
+
+export const <%= reducerName %> = handleAction(
+  <%= actionName %>,
+  (state: IInitialState, action: Action<any>) => {
+    return state;
+  },
+  defaultState
+);

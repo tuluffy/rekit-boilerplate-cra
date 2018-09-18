@@ -7,9 +7,9 @@ import { ConnectedRouter } from 'react-router-redux';
 import * as Loadable from 'react-loadable';
 import history from './common/history';
 
-import { IAyncComponentLoader, IRoute } from '@src/interface';
+import { AyncComponentLoader, IRoute } from '@src/types';
 
-export const LoadableComponent = (loader: IAyncComponentLoader) => Loadable({
+export const LoadableComponent = (loader: AyncComponentLoader) => Loadable({
   loader: () => loader()
     .then(
       res => res, 

@@ -1,12 +1,15 @@
-// Initial state is the place you define all initial values for the Redux store of the feature.
-// In the 'standard' way, initialState is defined in reducers: http://redux.js.org/docs/basics/Reducers.html
-// But when application grows, there will be multiple reducers files, it's not intuitive what data is managed by the whole store.
-// So Rekit extracts the initial state definition into a separate module so that you can have
-// a quick view about what data is used for the feature, at any time.
+import * as Immutable from 'immutable';
 
-// NOTE: initialState constant is necessary so that Rekit could auto add initial state when creating async actions.
-
-const initialState = {
+const pureInitialState = {
 };
 
-export default initialState;
+export type InitialState = typeof pureInitialState;
+
+export interface IInitialState extends Immutable.Map<any, any> {
+  get: <K extends keyof InitialState, N>(key: K, notSetValue?: Map<any, any> | undefined | any) => InitialState[K]
+  set: <K extends keyof InitialState>(key: keyof InitialState, value: InitialState[K]) => any
+}
+
+const InitialState: IInitialState = Immutable.Map(pureInitialState);
+
+export default InitialState;

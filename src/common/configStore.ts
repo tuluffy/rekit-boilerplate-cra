@@ -1,13 +1,19 @@
+import * as Immutable from 'immutable';
 import { createStore, applyMiddleware, compose } from 'redux';
 import thunk from 'redux-thunk';
+import createSagaMiddleware from 'redux-saga';
 import { routerMiddleware } from 'react-router-redux';
+
 import history from './history';
 import rootReducer from './rootReducer';
+import rootSaga from './rootSaga';
 
 const router = routerMiddleware(history);
+const sagaMiddleware = createSagaMiddleware();
 
 // NOTE: Do not change middleares delaration pattern since rekit plugins may register middlewares to it.
 const middlewares = [
+  sagaMiddleware,
   thunk,
   router,
 ];
@@ -28,11 +34,15 @@ if (process.env.NODE_ENV === 'development') {
   }
 }
 
-export default function configureStore(initialState: any) {
+export type TRootState = ReturnType<typeof configureStore>;
+
+export default function configureStore(initialState: Immutable.Map<any, any>) {
   const store = createStore(rootReducer, initialState, compose(
     applyMiddleware(...middlewares),
     devToolsExtension
   ));
+
+  sagaMiddleware.run(rootSaga);
 
   /* istanbul ignore if  */
   // @ts-ignore

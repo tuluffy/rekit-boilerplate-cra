@@ -2,7 +2,7 @@
   "compilerOptions": {
     "baseUrl": ".",
     "outDir": "build/dist",
-    "module": "commonjs",
+    "module": "esNext",
     "target": "es5",
     "lib": ["es6", "dom"],
     "sourceMap": true,
@@ -17,9 +17,14 @@
     "noImplicitAny": true,
     "strictNullChecks": true,
     "suppressImplicitAnyIndexErrors": true,
-    "noUnusedLocals": true,
+    "noUnusedLocals": false,
+    "importHelpers": true,
+    "typeRoots": ["node_modules/@types", "./typings"],
+    "traceResolution": true,
+    "skipLibCheck": true,
     "paths": {
-      "@src/*": ["src/*"]
+      "@src/*": ["src/*"],
+      "@features/*": ["src/features/*"]
     }
   },
   "exclude": [

@@ -8,101 +8,156 @@ const _ = require('lodash');
 _.pascalCase = _.flow(_.camelCase, _.upperFirst);
 _.upperSnakeCase = _.flow(_.snakeCase, _.toUpper);
 
-const srcDir = path.join(__dirname, '..', 'src');
-const testsDir = path.join(__dirname, '..', 'tests');
+const baseSourceDir = path.join(__dirname, '..', 'src');
+const baseTestsDir = path.join(__dirname, '..', 'tests');
 const templatesDir = path.join(__dirname, 'templates');
 
-const add = (feature, name, type = 'component', options = {}) => {
+const featureMateriels = ['redux', 'sagas', 'selectors', 'services'];
+const add = (feature, name, type, options = {}) => {
+  const templateType = _.upperFirst(type); // Abb like
+  const templates = [];
+
+  if (!type || !type.trim()) {
+    return console.log(`Error: invalid type '${type}' found`);
+  }
+
   // format
   feature = _.kebabCase(feature); // a-a-b like
-  name = _.camelCase(name); // aAB like
+  const lowerName = _.lowerCase(name);
+  const camelName = _.camelCase(name); // aAB like
+  const pascalName = _.pascalCase(name); // WordWordWord like
+  
+  let actionName = `do${pascalName}`;
+  let reducerName = `apply${pascalName}`;
+  let sagaName = `saga${pascalName}`; // ?
+  let selectorName = `get${pascalName}`;
+  let presenterName = `SFC${pascalName}`;
+  let componentName = pascalName;
+  let constsName = _.upperSnakeCase(pascalName);
 
-  const featureSrcDir = path.join(srcDir, 'features', feature);
-  const featureSrcReduxDir = path.join(srcDir, 'features', feature, 'redux');
-  const featureTestsDir = path.join(testsDir, 'features', feature);
-  const featureTestsReduxDir = path.join(testsDir, 'features', feature, 'redux');
+  const sourceDir = path.join(baseSourceDir, 'features', feature);
+  const testsDir = path.join(baseTestsDir, 'features', feature);
+
+  let targetSourceDir = sourceDir;
+  let targetTestsDir = testsDir;
+
+  const featureIndex = path.join(sourceDir, 'index.ts');
+
+  // init feature
+  if (!fsX.pathExistsSync(sourceDir)) {
+    fsX.ensureDirSync(sourceDir);
+    fsX.ensureDirSync(testsDir);
+    templates.push({
+      template: path.join(templatesDir, 'route.ts.tmpl'),
+      target: path.join(sourceDir, 'route.ts')
+    });
+    templates.push({
+      template: path.join(templatesDir, 'Index.ts.tmpl'),
+      target: featureIndex
+    });
+    featureMateriels.forEach(
+      (materiel) => {
+        fsX.ensureDirSync(path.join(sourceDir, materiel));
+        fsX.ensureDirSync(path.join(testsDir, materiel));
+        fsX.copySync(path.join(templatesDir, materiel), path.join(sourceDir, materiel));
+      }
+    )
+  }
+
+  if (!name || !name.trim()) {
+    return;
+  }
 
   // options
-  const { async, connect, force, pure } = options;
-  
-  let pascalName = _.pascalCase(name);
-  let templateType = _.upperFirst(type);
-  let targetDir = featureSrcDir;
-  let targetTestDir = featureTestsDir;
+  const { async = true, connect, force, pure, url } = options;
+  let fileName = camelName;
+  let exportCode = '';
   let ext = '.ts';
-  let exportName = pascalName;
+  const isPage = url && !pascalName.match(/Page$/g);
   switch (templateType) {
     case 'Saga':
+      targetSourceDir = path.join(sourceDir, 'sagas');
+      targetTestsDir = path.join(testsDir, 'sagas');
+      exportCode = '';
+      break;
     case 'Action':
+      targetSourceDir = path.join(sourceDir, 'redux');
+      targetTestsDir = path.join(testsDir, 'redux');
+      exportCode = {
+        [path.join(targetSourceDir, 'actions.ts')]: `export { ${actionName} } from './${fileName}';`
+      }
+      break;
     case 'Selector':
-      targetDir = featureSrcReduxDir;
-      targetTestDir = featureTestsReduxDir;
-      exportName = name;
+      targetSourceDir = path.join(sourceDir, 'selectors');
+      targetTestsDir = path.join(testsDir, 'selectors');
+      exportCode = {
+        [path.join(targetSourceDir, 'index.ts')]: `export { ${selectorName} } from './${fileName}';`
+      }
       break;
     case 'Presenter':
       // stateless component
-      pascalName = exportName = `SFC${pascalName}`;
+      presenterName = fileName = `SFC${pascalName}${isPage ? 'Page' : ''}`;
+      exportCode = {
+        [path.join(targetSourceDir, 'index.ts')]: `export { default as ${presenterName} } from './${fileName}'`
+      }
+      ext = '.tsx';
+      break;
     case 'Component':
+      componentName = fileName = `${pascalName}${isPage ? 'Page' : ''}`;
+      exportCode = {
+        [path.join(targetSourceDir, 'index.ts')]: `export { default as ${componentName} } from './${fileName}'`
+      }
       ext = '.tsx';
       break;
     default:
       return console.error(`Error: invalid type ${type} found`);
   }
+
+  fsX.ensureDirSync(targetSourceDir);
+  fsX.ensureDirSync(targetTestsDir);
+
   const renderData = {
-    async,
+    async: true,
     connect,
+    force,
+    pure,
     feature,
-    Component: pascalName,
-    Presenter: pascalName,
-    name,
+    url,
+
+    actionName,
+    reducerName,
+    sagaName,
+    pascalSagaName: _.pascalCase(sagaName),
+    selectorName,
+    presenterName,
+    componentName,
+    constsName,
+
+    lowerName,
+    camelName,
     pascalName,
-    action: name,
-    selector: name,
-    pure
+
+    fileName
   };
 
-  if (_.toLower(name) === 'index' || name === 'default') {
+  if (lowerName === 'index' || lowerName === 'actions' || lowerName === 'reducer'
+    || camelName === 'initialState' || name === 'default') {
     return console.error(`Error: can\'t use ${name} as name`);
   }
-  const templates = [];
-  const featureIndex = path.join(featureSrcDir, 'index.ts');
-  if (!fsX.pathExistsSync(featureSrcDir)) {
-    fsX.ensureDirSync(featureSrcDir);
-    fsX.ensureDirSync(featureSrcReduxDir);
-    templates.push({
-      template: path.join(templatesDir, 'route.ts'),
-      target: path.join(featureSrcDir, 'route.ts')
-    });
-    templates.push({
-      template: path.join(templatesDir, 'Index.ts'),
-      target: featureIndex
-    });
-    fsX.copySync(path.join(templatesDir, 'redux'), featureSrcReduxDir);
-  }
-  fsX.ensureDirSync(featureTestsDir);
-  fsX.ensureDirSync(featureTestsReduxDir);
 
   ['', '.test'].forEach(
     (pts) => {
       const extName = `${pts}${ext}`;
-      let entry = false;
-      if (pts === '') {
-        if (ext === '.tsx') {
-          entry = featureIndex;
-        } else if (templateType === 'Action') {
-          entry = path.join(featureSrcReduxDir, 'actions.ts');
-        }
-      }
       templates.push({
-        entry,
-        template: path.join(templatesDir, `${templateType}${extName}`),
-        target: path.join(pts === '.test' ? targetTestDir : targetDir, `${exportName}${extName}`)
+        exportCode,
+        template: path.join(templatesDir, `${templateType}${extName}.tmpl`),
+        target: path.join(pts === '.test' ? targetTestsDir : targetSourceDir, `${fileName}${extName}`)
       });
     }
   );
 
   templates.forEach(
-    ({ template, target, entry }) => {
+    ({ template, target, exportCode }) => {
       if (fsX.pathExistsSync(template)) {
         const res = _.template(fsX.readFileSync(template, 'utf8'))(renderData);
         const old = fsX.pathExistsSync(target);
@@ -112,20 +167,24 @@ const add = (feature, name, type = 'component', options = {}) => {
           if (old) {
             console.log(`Warning: overlap ${target}`);
           }
-          fsX.writeFileSync(target, res, { encoding: 'utf8' });
+          fsX.writeFileSync(target, res.replace(/[\n]{3,}/g, '\n\n').trim(), { encoding: 'utf8' });
         }
-        if (entry) {
-          const exportCode = `export ${ext === '.tsx' ? `{ default as ${exportName}, I${exportName}Props }` : `{ ${exportName} }`} from './${exportName}';\n`;
-          if (fsX.readFileSync(entry, { encoding: 'utf8' }).indexOf(exportCode) === -1) {
-            fsX.writeFileSync(
-              entry, 
-              exportCode,
-              { encoding: 'utf8', flag: 'a+' }
-            );
-          }
+        if (exportCode) {
+          Object.keys(exportCode).forEach(
+            (fileToInject) => {
+              const code = exportCode[fileToInject];
+              if (exportCode[fileToInject] && fsX.readFileSync(fileToInject, { encoding: 'utf8' }).indexOf(code.trim()) === -1) {
+                fsX.writeFileSync(
+                  fileToInject, 
+                  code,
+                  { encoding: 'utf8', flag: 'a+' }
+                );
+              }
+            }
+          )
         }
       } else {
-        console.log(template);
+        console.log(`Error: template ${template} not found`);
       }
     }
   );
@@ -134,10 +193,11 @@ const add = (feature, name, type = 'component', options = {}) => {
 commander
   .version(require('../package.json').version)
   .command('add <type> <feature[/name]>')
-  .option('-a, --async', 'auto async in features/xxx/index.tsx')
+  // .option('-a, --async', 'auto async in features/xxx/index.tsx')
   .option('-c, --connect', 'connect with redux')
   .option('-p, --pure', 'use React.PureComponent insted of React.Component')
   .option('-f, --force', 'overlap if file already exists')
+  .option('-u, --url', '\'create NamePage\' like Component')
   .action((type, featureAndname, options) => {
     const [ feature, name ] = featureAndname.split('/');
     add(feature, name, type, options);

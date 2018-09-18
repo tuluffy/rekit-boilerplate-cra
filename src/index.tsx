@@ -1,21 +1,19 @@
 import * as React from 'react';
-import { AppContainer } from 'react-hot-loader';
 import { render } from 'react-dom';
+import * as Immutable from 'immutable';
 import configStore from './common/configStore';
 import routeConfig from './common/routeConfig';
 import Root from './Root';
 
 import './styles/index.less';
 
-const store = configStore({});
+const store = configStore(Immutable.Map());
 
 // export type RootState = typeof store;
 
 function renderApp(app: any) {
   render(
-    <AppContainer>
-      {app}
-    </AppContainer>,
+    app,
     document.getElementById('root')
   );
 }
@@ -28,13 +26,14 @@ renderApp(<Root store={store} routeConfig={routeConfig} />);
 if (module.hot) {
   // @ts-ignore
   module.hot.accept('./common/routeConfig', () => {
-    const nextRouteConfig = require('./common/routeConfig').default;
-    renderApp(<Root store={store} routeConfig={nextRouteConfig} />);
+    import('./common/routeConfig').then(
+      ({ default: nextRouteConfig }) => renderApp(<Root store={store} routeConfig={nextRouteConfig} />)
+    )
   });
   // @ts-ignore
   module.hot.accept('./Root', () => {
-    // @ts-ignore
-    const nextRoot = require('./Root').default;
-    renderApp(<Root store={store} routeConfig={routeConfig} />);
+    import('./Root').then(
+      () => renderApp(<Root store={store} routeConfig={routeConfig} />)
+    )
   });
 }

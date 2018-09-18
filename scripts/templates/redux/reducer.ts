@@ -1,16 +1,17 @@
-import initialState from './initialState';
+import { Action } from 'redux-actions';
+
+import initialState, { IInitialState } from './initialState';
 
 const reducers: any[] = [
 ];
 
-export default function reducer(state = initialState, action: any) {
-  let newState;
+export default function reducer(state = initialState, action: Action<any>): IInitialState {
   switch (action.type) {
     // Handle cross-topic actions here
     default:
-      newState = state;
+      state = state;
       break;
   }
   /* istanbul ignore next */
-  return reducers.reduce((s, r) => r(s, action), newState);
+  return reducers.reduce((s, r) => r(s, action), state);
 }

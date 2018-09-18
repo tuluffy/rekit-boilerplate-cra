@@ -2,7 +2,6 @@ import * as React from 'react';
 import { bindActionCreators, Dispatch } from 'redux';
 import { connect } from 'react-redux';
 import reactLogo from '../../images/react-logo.svg';
-import rekitLogo from '../../images/rekit-logo.svg';
 // @ts-ignore
 import * as actions from './redux/actions';
 
@@ -12,7 +11,6 @@ export class DefaultPage extends React.Component {
       <div className="home-default-page">
         <header className="app-header">
           <img src={reactLogo} className="app-logo" alt="logo" />
-          <img src={rekitLogo} className="rekit-logo" alt="logo" />
           <h1 className="app-title">Welcome to React</h1>
         </header>
         <div className="app-intro">

@@ -1,0 +1,32 @@
+import * as Immutable from 'immutable';
+import { delay } from 'redux-saga';
+import { call, put } from 'redux-saga/effects';
+
+import {
+  <%= constsName %>,
+  <%= actionName %>,
+  <%= sagaName %>,
+  <%= reducerName %>
+} from '@src/features/<%= feature %>/sagas/<%= fileName %>';
+
+
+describe('<%= feature %>/sagas/<%= actionName %>', () => {
+  it('correct action by <%= actionName %>', () => {
+    expect(<%= actionName %>()).toHaveProperty('type', <%= constsName %>);
+  });
+  const generator = <%= sagaName %>();
+
+  it('calls delay when receives a begin action', () => {
+    expect(generator.next().value).toMatchObject(call(delay, 20));
+  });
+
+  it('handles action type <%= actionName %> correctly', () => {
+    const prevState = Immutable.Map({});
+    const state = <%= reducerName %>(
+      prevState,
+      { type: <%= constsName %> }
+    );
+    expect(state === prevState).toBeFalsy();
+    expect(state).toEqual(prevState);
+  });
+});

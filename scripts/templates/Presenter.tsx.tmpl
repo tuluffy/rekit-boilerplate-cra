@@ -1,0 +1,40 @@
+import * as React from 'react';<% if (connect) { %>
+import { bindActionCreators, Dispatch } from 'redux';
+import { connect } from 'react-redux';<% if (url) {%>
+import { RouteComponentProps } from 'react-router-dom';
+<%} %>
+
+import { IRootState } from '@src/types';
+
+// @ts-ignore
+import * as actions from './redux/actions';
+
+type StateProps  = ReturnType<typeof mapStateToProps>;
+type DispatchProps  = ReturnType<typeof mapDispatchToProps>;
+<% } %>
+
+export interface I<%= presenterName %>Props {}
+type Props = <%= url ? `RouteComponentProps<any> & ` : '' %><%= connect ? 'StateProps & DispatchProps & ' : '' %>I<%= presenterName %>Props;
+
+export const <%= presenterName %>: React.SFC<Props> = (props: Props) => {
+  return (
+    <div className="common-presenter"/>
+  );
+}
+<% if (connect) { %>
+/* istanbul ignore next */
+function mapStateToProps(state: IRootState, ownProps: I<%= presenterName %>Props) {
+  return {};
+}
+
+/* istanbul ignore next */
+function mapDispatchToProps(dispatch: Dispatch, ownProps: I<%= presenterName %>Props) {
+  return {
+    actions: bindActionCreators({ ...actions }, dispatch)
+  };
+}
+
+export default connect<StateProps, DispatchProps, I<%= presenterName %>Props>(mapStateToProps, mapDispatchToProps)(<%= presenterName %>);
+<% } else { %>
+export default <%= presenterName %>;
+<% } %>

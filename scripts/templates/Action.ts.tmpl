@@ -1,0 +1,24 @@
+import * as Immutable from 'immutable';
+import { createAction, handleAction, Action } from 'redux-actions';
+
+import { IInitialState } from './initialState';
+
+export const <%= constsName %> = '<%= feature %>/<%= constsName %>';
+
+export const <%= actionName %> = createAction(<%= constsName %>);
+
+export interface I<%= pascalName %>State {
+}
+
+export const pure<%= pascalName %>State: I<%= pascalName %>State = {
+};
+
+const defaultState: Immutable.Map<any, any> = Immutable.Map(pure<%= pascalName %>State);
+
+export const <%= reducerName %> = handleAction(
+  <%= actionName %>,
+  (state: IInitialState, action: Action<any>) => {
+    return state;
+  },
+  defaultState
+);
